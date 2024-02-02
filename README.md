@@ -16,13 +16,13 @@ Improve the way weather data is displayed in the command line, making it more us
 Allow users to input their location (or any location of interest) to fetch weather data specific to that area.
 
 4. ### Weather Trends: 
-Implement functionality to show short-term weather trends, like the forecast for the next few hours or days.
+Implement functionality to show short-term weather trends, like the forecast for the next few hours or days, based on user selection.
 
 5. ### Caching Mechanism: 
-To enhance performance, implement a caching mechanism that temporarily stores recent weather data, reducing the frequency of API calls.
+Implement a caching mechanism that temporarily stores recent weather data, reducing the frequency of API calls.
 
 6. ### Error Handling Improvements: 
-Enhance error handling to gracefully manage situations like API downtime, invalid user inputs, or network issues.
+Enhanced error handling to gracefully manage situations like API downtime, invalid user inputs, or network issues.
 
 7. ### CLI-Based: 
 The application will be purely command-line based, without a graphical user interface (GUI), to keep the focus on backend functionality and simplify the development process.
