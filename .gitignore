@@ -1,8 +1,17 @@
+# Ignore vscode configuration files
+.vscode/
+
+# Ignore vscode/launch.json
+**.launch.json
+
 # Compiled class file
 *.class
 
 # Log file
 *.log
+
+# Property files
+*.properties
 
 # BlueJ files
 *.ctxt
