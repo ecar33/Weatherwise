@@ -8,7 +8,7 @@ public final class ApiKeyReader {
     public static String get() {
         // Load the properties from the config.properties file
         Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream(".properties")) {
+        try (FileInputStream input = new FileInputStream("../.properties")) {
             properties.load(input);
         } catch (IOException e) {
             e.printStackTrace();
