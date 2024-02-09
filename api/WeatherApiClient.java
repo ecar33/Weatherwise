@@ -1,5 +1,7 @@
 package api;
 
+import data.*;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,16 +11,17 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
-public class HttpClientSync {
+public class WeatherApiClient {
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
+    private static final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
     public static void main(String[] args) throws IOException, InterruptedException {
 
         String API_KEY = ApiKeyReader.get();
@@ -33,28 +36,20 @@ public class HttpClientSync {
                 .setHeader("content-type", "application/json")
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         // // print response headers
         // HttpHeaders headers = response.headers();
         // headers.map().forEach((k, v) -> System.out.println(k + ":" + v));
 
         // print status code
-        System.out.println(response.statusCode());
+        System.out.println(httpResponse.statusCode());
 
-        // print response body
-        System.out.println(response.body());
+        WeatherResponse weatherResponse = mapper.readValue(httpResponse.body(), WeatherResponse.class);
 
+        Map<String, Object> values = weatherResponse.getTimelines().getDaily()[1].getValues();
 
-    }
+        System.out.println(values);
 
-    public static void toMap(String jsonString) throws JsonProcessingException {
-        // Create an ObjectMapper instance
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> result = mapper.readValue(jsonString, Map.class);
-
-        
-        // // Print the resulting map to the console
-        System.out.println(result);
     }
 }

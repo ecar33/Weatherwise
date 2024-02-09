@@ -10,8 +10,6 @@ public class WeatherCLI {
 
         System.out.println(logo);
         
-
-        
   }
 }
 
