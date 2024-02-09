@@ -1,12 +1,5 @@
 package api;
 
-//usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS com.fasterxml.jackson.core:jackson-databind:2.13.0
-//DEPS com.fasterxml.jackson.core:jackson-core:2.13.0
-//DEPS com.fasterxml.jackson.core:jackson-annotations:2.13.0
-//SOURCES ApiKeyReader.java
-
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -50,7 +43,8 @@ public class HttpClientSync {
         System.out.println(response.statusCode());
 
         // print response body
-        HttpClientSync.toMap(response.body());
+        System.out.println(response.body());
+
 
     }
 
@@ -59,7 +53,8 @@ public class HttpClientSync {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> result = mapper.readValue(jsonString, Map.class);
 
+        
         // // Print the resulting map to the console
-        // System.out.println(result.get("location"));
+        System.out.println(result);
     }
 }
