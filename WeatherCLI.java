@@ -1,4 +1,3 @@
-
 public class WeatherCLI {
     public static void main(String[] args) {
 
@@ -10,6 +9,8 @@ public class WeatherCLI {
             """;
 
         System.out.println(logo);
-}
+
+        
+  }
 }
 
