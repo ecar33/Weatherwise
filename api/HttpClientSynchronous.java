@@ -1,3 +1,4 @@
+package api;
 
 import java.io.IOException;
 import java.net.URI;
@@ -10,16 +11,22 @@ import java.time.Duration;
 public class HttpClientSynchronous {
 
     private static final HttpClient httpClient = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
+            .version(HttpClient.Version.HTTP_2)
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
+        String API_KEY = ApiKeyReader.get();
+        String location = "omaha";
+
+        String query_parameters = String.format("apikey=%s&location=%s", API_KEY, location);
+
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create("https://httpbin.org/get"))
-                .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
+                .uri(URI.create(String.format("https://api.tomorrow.io/v4/weather/forecast?%s", query_parameters)))
+                .setHeader("User-Agent", "Weatherwise") // add request header
+                .setHeader("content-type", "application/json")
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
