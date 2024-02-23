@@ -1,6 +1,4 @@
-package api;
-
-import data.*;
+package src.api;
 
 import java.io.IOException;
 import java.net.URI;
@@ -10,8 +8,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import src.data.*;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 
 public class WeatherApiClient {
@@ -21,11 +23,12 @@ public class WeatherApiClient {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    private static final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
-    public static void main(String[] args) throws IOException, InterruptedException {
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
+
+    public WeatherResponse weatherApiCall(String location) throws IOException, InterruptedException {
 
         String API_KEY = ApiKeyReader.get();
-        String location = "omaha";
 
         String query_parameters = String.format("apikey=%s&location=%s", API_KEY, location);
 
@@ -43,13 +46,17 @@ public class WeatherApiClient {
         // headers.map().forEach((k, v) -> System.out.println(k + ":" + v));
 
         // print status code
+
         System.out.println(httpResponse.statusCode());
 
         WeatherResponse weatherResponse = mapper.readValue(httpResponse.body(), WeatherResponse.class);
+        weatherResponse.setFetchedAt();
 
-        Map<String, Object> values = weatherResponse.getTimelines().getDaily()[1].getValues();
+        // Get 'values'
+        // Map<String, String> values =
+        // weatherResponse.getTimelines().getDaily()[1].getValues();
 
-        System.out.println(values);
+        return weatherResponse;
 
     }
 }
