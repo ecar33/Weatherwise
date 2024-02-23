@@ -1,4 +1,4 @@
-package data;
+package src.data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Timelines {
     private DailyForecast[] daily;
 
-    public DailyForecast[] getDaily() {
+    public DailyForecast[] getDailyForecast() {
         return daily;
     }
 

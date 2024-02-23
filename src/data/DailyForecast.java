@@ -1,16 +1,16 @@
-package data;
+package src.data;
 
 import java.util.Map;
 
 public class DailyForecast {
     public String time;
-    private Map<String, Object> values;
+    private Map<String, String> values;
 
-    public Map<String, Object> getValues() {
+    public Map<String, String> getValues() {
         return values;
     }
 
-    public void setValues(Map<String, Object> values) {
+    public void setValues(Map<String, String> values) {
         this.values = values;
     }
 
