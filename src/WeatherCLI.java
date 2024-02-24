@@ -10,6 +10,7 @@ import src.view.WeatherFormatter;
 public class WeatherCLI {
   private Scanner input;
   private String location;
+  private DailyForecast forecast;
   private String defaultLocation = "omaha";
   private WeatherFormatter wFormatter = new WeatherFormatter();
   private static LocationReaderWriter lrw = new LocationReaderWriter();
@@ -46,14 +47,12 @@ public class WeatherCLI {
     WeatherCLI.lrw.writeLocationPreference(location);
   }
 
-  private DailyForecast getCurrentWeatherConditions() {
-    int dayIndex = 0;
-
+  private DailyForecast getWeatherForecast(int dayIndex) {
     try {
       WeatherApiClient wapi = new WeatherApiClient();
       WeatherResponse response = wapi.weatherApiCall(location);
 
-      DailyForecast forecast = response.getDailyForecast(dayIndex);
+      forecast = response.getDailyForecast(dayIndex);
       return forecast;
 
     } catch (IOException e) {
@@ -74,7 +73,7 @@ public class WeatherCLI {
           Welcome to Weatherwise, your CLI Weather Companion!
           Please select an option by typing the corresponding number:
           1. Current Weather Forecast
-          2. Short-term Forecast (Next 24 hours)
+          2. Tomorrow's Forecast
           3. Weekly Forecast (Next 7 days)
           4. Weather Alerts and Warnings
           5. Change location (Current location = %s)
@@ -96,12 +95,18 @@ public class WeatherCLI {
         }
       }
 
+      int dailyIndex = 0;
+
       switch (userInput) {
         case 1:
-          DailyForecast todaysForecast = getCurrentWeatherConditions();
-          wFormatter.printCurrentForecast(todaysForecast);
+          dailyIndex = 0;
+          forecast = getWeatherForecast(dailyIndex);
+          wFormatter.printDayForecast(forecast, dailyIndex);
           break;
         case 2:
+          dailyIndex = 1;
+          forecast = getWeatherForecast(dailyIndex);
+          wFormatter.printDayForecast(forecast, dailyIndex);
           break;
         case 3:
           break;
