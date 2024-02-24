@@ -9,11 +9,18 @@ import src.view.WeatherFormatter;
 
 public class WeatherCLI {
   private Scanner input;
-  private String location = "omaha";
+  private String location;
+  private String defaultLocation = "omaha";
   private WeatherFormatter wFormatter = new WeatherFormatter();
+  private static LocationReaderWriter lrw = new LocationReaderWriter();
 
   public WeatherCLI() {
     this.input = new Scanner(System.in);
+    this.location = lrw.loadLocationPreference();
+    if (this.location == null || this.location.isEmpty()) {
+      this.location = defaultLocation;
+      lrw.writeLocationPreference(this.location);
+    }
   }
 
   private void printLogo() {
@@ -31,6 +38,12 @@ public class WeatherCLI {
   private void terminate() {
     System.out.println("Thank you for using Weatherwise!");
     System.exit(0);
+  }
+
+  public void changeLocation() {
+    String newLocation = WeatherCLI.lrw.getUserLocation();
+    this.location = newLocation;
+    WeatherCLI.lrw.writeLocationPreference(location);
   }
 
   private DailyForecast getCurrentWeatherConditions() {
@@ -56,57 +69,57 @@ public class WeatherCLI {
     int userInput = 0;
     boolean validInput;
 
-    System.out.println("""
-        Welcome to Weatherwise, your CLI Weather Companion!
-        Please select an option by typing the corresponding number:
-        1. Current Weather Forecast
-        2. Short-term Forecast (Next 24 hours)
-        3. Weekly Forecast (Next 7 days)
-        4. Weather Alerts and Warnings
-        5. Change location (Default: omaha)
-        6. Exit""");
+    while (true) {
+      System.out.println("""
+          Welcome to Weatherwise, your CLI Weather Companion!
+          Please select an option by typing the corresponding number:
+          1. Current Weather Forecast
+          2. Short-term Forecast (Next 24 hours)
+          3. Weekly Forecast (Next 7 days)
+          4. Weather Alerts and Warnings
+          5. Change location (Current location = %s)
+          6. Exit""".formatted(this.location));
 
-    validInput = false;
-    while (!validInput) {
-      try {
-        userInput = Integer.parseInt(input.nextLine().trim());
+      validInput = false;
+      while (!validInput) {
+        try {
+          userInput = Integer.parseInt(input.nextLine().trim());
 
-        if (userInput < 1 || userInput > 7) {
-          System.out.println("Please input a number between 1 and 7.");
-        } else {
-          validInput = true;
+          if (userInput < 1 || userInput > 6) {
+            System.out.println("Please input a number between 1 and 6.");
+          } else {
+            validInput = true;
+          }
+
+        } catch (NumberFormatException e) {
+          System.out.println("Failed to get correct input, try again.");
         }
-
-      } catch (NumberFormatException e) {
-        System.out.println("Failed to get correct input, try again.");
       }
-    }
 
-    switch (userInput) {
-      case 1:
-        DailyForecast todaysForecast = getCurrentWeatherConditions();
-        wFormatter.printCurrentForecast(todaysForecast);
-        break;
-      case 2:
-        break;
-      case 3:
-        break;
-      case 4:
-        break;
-      case 5:
-        break;
-      case 6:
-        terminate();
-        break;
-    }
+      switch (userInput) {
+        case 1:
+          DailyForecast todaysForecast = getCurrentWeatherConditions();
+          wFormatter.printCurrentForecast(todaysForecast);
+          break;
+        case 2:
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+        case 5:
+          changeLocation();
+          break;
+        case 6:
+          terminate();
+          break;
+      }
 
+    }
   }
 
   public static void main(String[] args) {
     WeatherCLI wcli = new WeatherCLI();
-    LocationReaderWriter locationReaderWriter = new LocationReaderWriter();
-    locationReaderWriter.createLocationPreferenceFile();
-
     wcli.printLogo();
     wcli.menu();
   }

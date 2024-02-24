@@ -22,7 +22,7 @@ public class LocationReaderWriter {
                 return reader.nextLine();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            createLocationPreferenceFile();
         }
         return null;
     }

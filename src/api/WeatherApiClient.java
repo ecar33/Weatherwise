@@ -2,61 +2,49 @@ package src.api;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Map;
-import java.util.Collections;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import src.data.*;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
+
+import src.data.WeatherResponse;
 
 public class WeatherApiClient {
 
+    private static final String BASE_URL = "https://api.tomorrow.io/v4/weather/forecast";
     private static final HttpClient httpClient = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .connectTimeout(Duration.ofSeconds(10))
             .build();
-
     private static final ObjectMapper mapper = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public WeatherResponse weatherApiCall(String location) throws IOException, InterruptedException {
-
         String API_KEY = ApiKeyReader.get();
+        String encodedLocation = URLEncoder.encode(location, StandardCharsets.UTF_8);
 
-        String query_parameters = String.format("apikey=%s&location=%s", API_KEY, location);
+        URI uri = URI.create(String.format("%s?apikey=%s&location=%s", BASE_URL, API_KEY, encodedLocation));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(String.format("https://api.tomorrow.io/v4/weather/forecast?%s", query_parameters)))
-                .setHeader("User-Agent", "Weatherwise") // add request header
-                .setHeader("content-type", "application/json")
+                .uri(uri)
+                .header("User-Agent", "Weatherwise")
+                .header("content-type", "application/json")
                 .build();
 
         HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // // print response headers
-        // HttpHeaders headers = response.headers();
-        // headers.map().forEach((k, v) -> System.out.println(k + ":" + v));
-
-        // print status code
-
-        System.out.println(httpResponse.statusCode());
+        System.out.println("HTTP Status Code: " + httpResponse.statusCode());
 
         WeatherResponse weatherResponse = mapper.readValue(httpResponse.body(), WeatherResponse.class);
-        weatherResponse.setFetchedAt();
-
-        // Get 'values'
-        // Map<String, String> values =
-        // weatherResponse.getTimelines().getDaily()[1].getValues();
+        weatherResponse.setFetchedAt(LocalDateTime.now()); // Assuming setFetchedAt takes a LocalDateTime argument
 
         return weatherResponse;
-
     }
 }

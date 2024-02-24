@@ -11,7 +11,7 @@ public class WeatherFormatter {
         Double minTemp = celsiusToFahrenheit(Double.parseDouble(forecastValues.get("temperatureMin")));
 
 
-        System.out.println("Here is today's forecast: ");
+        System.out.println("Here is today's forecast for %s");
         System.out.println(String.format("Low - Average - High Temperatures: %.2f\u00B0F - %.2f\u00B0F - %.2f\u00B0F", minTemp, avgTemp, maxTemp));
 
 

@@ -2,7 +2,6 @@ package src.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherResponse {
@@ -29,8 +28,8 @@ public class WeatherResponse {
         this.timelines = timelines;
     }
 
-    public void setFetchedAt() {
-        this.fetchedAt = LocalDateTime.now();
+    public void setFetchedAt(LocalDateTime now) {
+        this.fetchedAt = now;
     }
 
     public LocalDateTime getFetchedAt() {
