@@ -25,11 +25,12 @@ public class WeatherApiClient {
     private static final ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public WeatherResponse weatherApiCall(String location) throws IOException, InterruptedException {
+    public WeatherResponse weatherApiCall(String location, String unit) throws IOException, InterruptedException {
         String API_KEY = ApiKeyReader.get();
         String encodedLocation = URLEncoder.encode(location, StandardCharsets.UTF_8);
+        String encodedUnit = URLEncoder.encode(unit, StandardCharsets.UTF_8);
 
-        URI uri = URI.create(String.format("%s?apikey=%s&location=%s", BASE_URL, API_KEY, encodedLocation));
+        URI uri = URI.create(String.format("%s?apikey=%s&location=%s&units=%s", BASE_URL, API_KEY, encodedLocation, encodedUnit));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -43,7 +44,7 @@ public class WeatherApiClient {
         System.out.println("HTTP Status Code: " + httpResponse.statusCode());
 
         WeatherResponse weatherResponse = mapper.readValue(httpResponse.body(), WeatherResponse.class);
-        weatherResponse.setFetchedAt(LocalDateTime.now()); // Assuming setFetchedAt takes a LocalDateTime argument
+        weatherResponse.setFetchedAt(LocalDateTime.now()); 
 
         return weatherResponse;
     }

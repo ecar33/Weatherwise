@@ -13,7 +13,7 @@ public class LocationReaderWriter {
     private Scanner input;
 
     public LocationReaderWriter() {
-        this.input = new Scanner(System.in) ;
+        this.input = new Scanner(System.in);
     }
 
     public String loadLocationPreference() {
@@ -38,20 +38,36 @@ public class LocationReaderWriter {
     }
 
     public String getUserLocation() {
-        System.out.println("Enter the location:");
+        System.out.println("""
+                Enter your location in one of the following formats:
+                1.) City name "new york"
+                2.) Latitude and Longitude (Decimal degree) "42.3478, -71.0466"
+                3.) US zip "10001" """);
+
+        String cityNamePattern = "^[a-zA-Z ]+$"; 
+        String latLongPattern = "^-?\\d{1,3}\\.\\d+,\\s*-?\\d{1,3}\\.\\d+$"; 
+        String zipCodePattern = "^\\d{5}$"; 
+
         String userInput = input.nextLine().trim();
 
-        if (!Pattern.matches(locationPattern, userInput)) {
-            System.out.println("Your input '" + userInput + "' might be incorrect. Do you want to proceed? (yes/no)");
-            String confirmation = input.nextLine().trim().toLowerCase();
 
-            if (!confirmation.equals("yes")) {
-                System.out.println("Please enter the location again.");
-                return getUserLocation(); // Recursively prompt for input again
+        // Check if the input matches any of the given formats
+        if (userInput.matches(cityNamePattern) || userInput.matches(latLongPattern)) {
+            return userInput; // Input is valid
+        } else if (userInput.matches(zipCodePattern)) {
+            return userInput + " US";
+        }
+        else {
+            System.out.println("The input may not fit one of the formats. Do you want to continue with this choice? (y/n)");
+            String confirmation = input.nextLine().trim().toLowerCase();
+            if (confirmation.equals("y")) {
+                return userInput;
+            } else {
+                return getUserLocation(); 
             }
         }
-        return userInput;
     }
+
 
     public void createLocationPreferenceFile() {
         String location;

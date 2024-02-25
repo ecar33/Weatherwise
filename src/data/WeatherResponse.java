@@ -2,10 +2,12 @@ package src.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherResponse {
     private Timelines timelines;
+    private Map<String, String> location;
     private LocalDateTime fetchedAt;
     private final long validityDurationInSeconds = 1800;
 
@@ -21,7 +23,15 @@ public class WeatherResponse {
     }
 
     public Timelines getTimelines() {
-        return timelines;
+        return this.timelines;
+    }
+
+    public String getLocationName() {
+        return this.location.get("name");
+    }
+
+    public void setLocation(Map<String, String> location) {
+        this.location = location;
     }
 
     public void setTimelines(Timelines timelines) {
