@@ -16,7 +16,7 @@ Improve the way weather data is displayed in the command line, making it more us
 Allow users to input their location (or any location of interest) to fetch weather data specific to that area.
 
 4. ### Weather Trends: 
-Implement functionality to show short-term weather trends, like the forecast for the next few hours or days, based on user selection.
+Implement functionality to show short-term weather trends, like the forecast for today, tomorrow, or the next few days, based on user selection.
 
 5. ### Caching Mechanism: 
 Implement a caching mechanism that temporarily stores recent weather data, reducing the frequency of API calls.
