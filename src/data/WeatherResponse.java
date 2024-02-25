@@ -22,6 +22,12 @@ public class WeatherResponse {
         return null;
     }
 
+    public DailyForecast[] getFiveDayForecast() {
+        DailyForecast[] fiveDayForecast = this.timelines.getDailyForecast();
+        return fiveDayForecast;
+        
+    }
+
     public Timelines getTimelines() {
         return this.timelines;
     }

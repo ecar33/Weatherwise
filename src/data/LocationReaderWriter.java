@@ -5,11 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class LocationReaderWriter {
     private static final String filePath = "./src/data/location_preference.txt";
-    private static final String locationPattern = "^[a-zA-Z\\s]+$";
     private Scanner input;
 
     public LocationReaderWriter() {

@@ -13,6 +13,7 @@ public class WeatherCLI {
   private String locationName;
   private String unit;
   private DailyForecast forecast;
+  private DailyForecast[] fiveDayForecast;
   private String defaultLocation = "omaha";
   private WeatherFormatter wFormatter = new WeatherFormatter();
   private static LocationReaderWriter lrw = new LocationReaderWriter();
@@ -86,11 +87,29 @@ public class WeatherCLI {
   private DailyForecast getWeatherForecast(int dayIndex) {
     try {
       WeatherApiClient wapi = new WeatherApiClient();
-      WeatherResponse response = wapi.weatherApiCall(this.location, this.unit);
+      WeatherResponse response = wapi.weatherForecastApiCall(this.location, this.unit);
 
       this.locationName = response.getLocationName();
       forecast = response.getDailyForecast(dayIndex);
       return forecast;
+
+    } catch (IOException e) {
+      System.out.println(e);
+    } catch (InterruptedException e) {
+      System.out.println(e);
+    }
+    return null;
+
+  }
+
+  private DailyForecast[] getWeatherForecast() {
+    try {
+      WeatherApiClient wapi = new WeatherApiClient();
+      WeatherResponse response = wapi.weatherForecastApiCall(this.location, this.unit);
+
+      this.locationName = response.getLocationName();
+      fiveDayForecast = response.getFiveDayForecast();
+      return fiveDayForecast;
 
     } catch (IOException e) {
       System.out.println(e);
@@ -112,18 +131,17 @@ public class WeatherCLI {
           1. Current Weather Forecast
           2. Tomorrow's Forecast
           3. 5 Day Forecast
-          4. Weather Alerts and Warnings
-          5. Change location (Current: %s)
-          6. Change units (Current: %s)
-          7. Exit""".formatted(this.location, this.unit));
+          4. Change location (Current: %s)
+          5. Change units (Current: %s)
+          6. Exit""".formatted(this.location, this.unit));
 
       validInput = false;
       while (!validInput) {
         try {
           userInput = Integer.parseInt(input.nextLine().trim());
 
-          if (userInput < 1 || userInput > 7) {
-            System.out.println("Please input a number between 1 and 7.");
+          if (userInput < 1 || userInput > 6) {
+            System.out.println("Please input a number between 1 and 6.");
           } else {
             validInput = true;
           }
@@ -154,17 +172,17 @@ public class WeatherCLI {
           }
           break;
         case 3:
+          fiveDayForecast = getWeatherForecast();
+          wFormatter.printFiveDayForecast(fiveDayForecast, this.locationName);
           break;
         case 4:
-          break;
-        case 5:
           changeLocation();
           break;
-        case 6:
+        case 5:
           changeUnits();
           System.out.println(getUnit());
           break;
-        case 7:
+        case 6:
           terminate();
           break;
       }
