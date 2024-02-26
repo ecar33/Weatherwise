@@ -17,6 +17,7 @@ public class WeatherCLI {
   private String defaultLocation = "omaha";
   private WeatherFormatter wFormatter = new WeatherFormatter();
   private static LocationReaderWriter lrw = new LocationReaderWriter();
+  private WeatherResponseCache wrc;
 
   public WeatherCLI() {
     this.input = new Scanner(System.in);
@@ -26,6 +27,7 @@ public class WeatherCLI {
       lrw.writeLocationPreference(this.location);
     }
     this.unit = "imperial";
+    this.wrc = new WeatherResponseCache();
   }
 
   private void printLogo() {
@@ -85,39 +87,46 @@ public class WeatherCLI {
   }
 
   private DailyForecast getWeatherForecast(int dayIndex) {
-    try {
-      WeatherApiClient wapi = new WeatherApiClient();
-      WeatherResponse response = wapi.weatherForecastApiCall(this.location, this.unit);
+    WeatherResponse response;
+    response = wrc.getResponse(this.location, this.unit);
 
-      this.locationName = response.getLocationName();
-      forecast = response.getDailyForecast(dayIndex);
-      return forecast;
+    if (response == null) {
+      try {
+        WeatherApiClient wapi = new WeatherApiClient();
+        response = wapi.weatherForecastApiCall(this.location, this.unit);
+        wrc.cacheResponse(this.location, this.unit, response);
 
-    } catch (IOException e) {
-      System.out.println(e);
-    } catch (InterruptedException e) {
-      System.out.println(e);
+      } catch (IOException e) {
+        System.out.println(e);
+        return null;
+      } catch (InterruptedException e) {
+        System.out.println(e);
+        return null;
+      }
     }
-    return null;
-
+    this.locationName = response.getLocationName();
+    forecast = response.getDailyForecast(dayIndex);
+    return forecast;
   }
 
-  private DailyForecast[] getWeatherForecast() {
-    try {
-      WeatherApiClient wapi = new WeatherApiClient();
-      WeatherResponse response = wapi.weatherForecastApiCall(this.location, this.unit);
-
-      this.locationName = response.getLocationName();
-      fiveDayForecast = response.getFiveDayForecast();
-      return fiveDayForecast;
-
-    } catch (IOException e) {
-      System.out.println(e);
-    } catch (InterruptedException e) {
-      System.out.println(e);
+  private DailyForecast[] getFiveDayForecasts() {
+    WeatherResponse response;
+    response = wrc.getResponse(this.location, this.unit);
+    if (response == null) {
+      try {
+        WeatherApiClient wapi = new WeatherApiClient();
+        response = wapi.weatherForecastApiCall(this.location, this.unit);
+        wrc.cacheResponse(this.location, this.unit, response);
+      } catch (IOException e) {
+        System.out.println(e);
+        return null;
+      } catch (InterruptedException e) {
+        System.out.println(e);
+        return null;
+      }
     }
-    return null;
-
+    fiveDayForecast = response.getFiveDayForecast();
+    return fiveDayForecast;
   }
 
   private void menu() {
@@ -172,7 +181,7 @@ public class WeatherCLI {
           }
           break;
         case 3:
-          fiveDayForecast = getWeatherForecast();
+          fiveDayForecast = getFiveDayForecasts();
           wFormatter.printFiveDayForecast(fiveDayForecast, this.locationName);
           break;
         case 4:
@@ -180,7 +189,6 @@ public class WeatherCLI {
           break;
         case 5:
           changeUnits();
-          System.out.println(getUnit());
           break;
         case 6:
           terminate();
