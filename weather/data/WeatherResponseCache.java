@@ -1,4 +1,4 @@
-package src.data;
+package weather.data;
 
 import java.util.HashMap;
 import java.util.Map;

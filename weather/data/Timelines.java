@@ -1,4 +1,4 @@
-package src.data;
+package weather.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

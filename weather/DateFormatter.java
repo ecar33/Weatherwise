@@ -1,4 +1,4 @@
-package src;
+package weather;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

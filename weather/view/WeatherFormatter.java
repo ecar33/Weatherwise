@@ -1,10 +1,11 @@
-package src.view;
+package weather.view;
 
 import java.util.Map;
 import java.util.Scanner;
 import java.util.AbstractMap.SimpleEntry;
-import src.data.*;
-import src.DateFormatter;
+
+import weather.DateFormatter;
+import weather.data.*;
 
 /**
  * This class is responsible for formatting weather data into a human-readable
