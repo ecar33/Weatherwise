@@ -4,25 +4,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * Utility class to read API key from a properties file.
+ */
 public final class ApiKeyReader {
-    public static String get() {
-        // Load the properties from the config.properties file
-        Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream(".properties")) {
-            properties.load(input);
-        } catch (IOException e) {
-            e.printStackTrace();
 
+    /**
+     * Retrieves the API key from a properties file.
+     * @return The API key if found; "Not Found" otherwise.
+     */
+    public static String get() {
+        Properties properties = new Properties(); // Create a Properties object to hold key-value pairs.
+        try (FileInputStream input = new FileInputStream(".properties")) { // Try to open the properties file.
+            properties.load(input); // Load the properties from the file.
+        } catch (IOException e) {
+            e.printStackTrace(); // Print the stack trace if an IOException occurs.
         }
 
-        // Get the API key from the loaded properties
-        String apiKey = properties.getProperty("api.key");
+        String apiKey = properties.getProperty("api.key"); // Retrieve the API key using its key.
 
-        // Check if the API key is not null and not empty
+        // Check if the API key is not null and not empty.
         if (apiKey != null && !apiKey.isEmpty()) {
-            return apiKey;
+            return apiKey; // Return the API key if it's valid.
         } else {
-            return "Not Found";
+            return "Not Found"; // Return "Not Found" if the API key is null or empty.
         }
     }
 }
