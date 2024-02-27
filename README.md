@@ -33,8 +33,10 @@ The application will limit its scope to basic weather parameters to keep the API
 
 
 ### To compile: 
+```
 git clone git@github.com:unocsci2830/csci2830sp24pa1-ecar33.git
 cd csci2830sp24pa1-ecar33
 git checkout compiled-version
 git pull origin compiled-version
 java -cp "Weatherwise.jar:lib/*" weather.WeatherCLI
+```
