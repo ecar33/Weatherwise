@@ -1,11 +1,11 @@
-package src;
+package weather;
 
 import java.io.IOException;
 import java.util.Scanner;
 
-import src.api.*;
-import src.data.*;
-import src.view.WeatherFormatter;
+import weather.api.*;
+import weather.data.*;
+import weather.view.WeatherFormatter;
 
 /**
  * Main class for the command line interface (CLI) version of the Weather
@@ -70,10 +70,13 @@ public class WeatherCLI {
    */
   public void changeLocation() {
     String newLocation = WeatherCLI.lrw.getUserLocation();
-    this.location = newLocation;
-    WeatherCLI.lrw.writeLocationPreference(location);
+    if (newLocation != null && !newLocation.isEmpty()) {
+      this.location = newLocation;
+      WeatherCLI.lrw.writeLocationPreference(location);
+    } else {
+      System.out.println("Invalid location input. Location not changed.");
+    }
   }
-
   /**
    * Returns the current unit of measurement for weather data.
    *

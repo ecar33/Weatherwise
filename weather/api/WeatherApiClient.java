@@ -1,4 +1,4 @@
-package src.api;
+package weather.api;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,9 +11,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 
-import src.data.WeatherResponse;
+import weather.data.WeatherResponse;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 /**
  * Client for making API calls to a weather forecasting service.
