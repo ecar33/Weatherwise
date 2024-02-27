@@ -6,10 +6,20 @@ import java.util.AbstractMap.SimpleEntry;
 import src.data.*;
 import src.DateFormatter;
 
+/**
+ * This class is responsible for formatting weather data into a human-readable
+ * format.
+ * It displays weather forecasts including temperature, UV index, and humidity.
+ */
 public class WeatherFormatter {
+    // A map to associate weather codes with their descriptions
     private Map<String, String> weatherDescriptions;
     private Scanner input;
 
+    /**
+     * Constructor initializes the weatherDescriptions map with predefined codes and
+     * descriptions.
+     */
     public WeatherFormatter() {
         this.weatherDescriptions = Map.ofEntries(
                 new SimpleEntry<>("0", "Unknown"),
@@ -38,8 +48,14 @@ public class WeatherFormatter {
                 new SimpleEntry<>("8000", "Thunderstorm"));
     }
 
+    /**
+     * Prints the forecast for today or tomorrow.
+     *
+     * @param todaysForecast The forecast data for the day.
+     * @param dailyIndex     Index indicating if it's today (0) or tomorrow (1).
+     * @param location       The location for the forecast.
+     */
     public void printDayForecast(DailyForecast todaysForecast, int dailyIndex, String location) {
-
         String day = dailyIndex == 0 ? "today" : "tomorrow";
 
         Map<String, String> forecastValues = todaysForecast.getValues();
@@ -47,6 +63,7 @@ public class WeatherFormatter {
         String weatherCode = forecastValues.get("weatherCodeMin");
         String weatherDescription = getWeatherDescription(weatherCode);
 
+        // Parse temperature and humidity values to double, and UV index to integer
         Double avgTemp = Double.parseDouble(forecastValues.get("temperatureAvg"));
         Double maxTemp = Double.parseDouble(forecastValues.get("temperatureMax"));
         Double minTemp = Double.parseDouble(forecastValues.get("temperatureMin"));
@@ -57,6 +74,7 @@ public class WeatherFormatter {
         Double humidityAvg = Double.parseDouble(forecastValues.get("humidityAvg"));
         Double humidityMax = Double.parseDouble(forecastValues.get("humidityMax"));
 
+        // Output the forecast information
         System.out.println("Here is %s's forecast for:".formatted(day));
         System.out.println(location + '\n');
         System.out.println("Forecast: %s".formatted(weatherDescription));
@@ -70,8 +88,15 @@ public class WeatherFormatter {
         System.out.println("Press q to return to the menu");
     }
 
+    /**
+     * Prints a five-day weather forecast for a specified location.
+     *
+     * @param fiveDayForecast An array of DailyForecast objects representing the
+     *                        five-day forecast.
+     * @param location        The location for the forecast.
+     */
     public void printFiveDayForecast(DailyForecast[] fiveDayForecast, String location) {
-        String userInput = "";
+        String userInput;
         Integer pageIndex = 0;
         boolean validInput;
         this.input = new Scanner(System.in);
@@ -89,6 +114,7 @@ public class WeatherFormatter {
             String time = forecast.getTime();
             String formattedTime = DateFormatter.formatToMonthDay(time);
 
+            // Use safe parsing to handle possible parsing errors
             Double avgTemp = safeParseDouble(forecastValues.get("temperatureAvg"), 0.0);
             Double maxTemp = safeParseDouble(forecastValues.get("temperatureMax"), 0.0);
             Double minTemp = safeParseDouble(forecastValues.get("temperatureMin"), 0.0);
@@ -99,6 +125,7 @@ public class WeatherFormatter {
             Double humidityAvg = safeParseDouble(forecastValues.get("humidityAvg"), 0.0);
             Double humidityMax = safeParseDouble(forecastValues.get("humidityMax"), 0.0);
 
+            // Output the forecast information
             System.out.println("Forecast for %s: %s".formatted(formattedTime, weatherDescription));
             System.out.println(
                     String.format("Temperature: %.2f°F - %.2f°F - %.2f°F", minTemp, avgTemp, maxTemp));
@@ -116,45 +143,54 @@ public class WeatherFormatter {
             if (userInput.equals("p")) {
                 pageIndex = (pageIndex + 1) % (fiveDayForecast.length - 1);
             } else if (userInput.equals("q")) {
-                break;
+                return;
             } else {
-                validInput = false;
-                while (!validInput) {
-                    System.out.println("Please only input 'p' or 'q'");
-                    userInput = input.nextLine().toLowerCase().strip();
-                    if (userInput.equals("p") || userInput.equals("q")) {
-                        validInput = true;
-                    }
-                }
+                System.out.println("Invalid input, try again.");
             }
-        } while (!userInput.equals("q"));
+
+        } while (!validInput);
     }
 
-    public void printAlertsAndWarnings() {
-
-    }
-
-    public String getWeatherDescription(String weatherCode) {
-        return weatherDescriptions.get(weatherCode);
-    }
-
-    private int safeParseInt(String str, int defaultValue) {
-        if (str != null && !str.isEmpty()) {
-            try {
-                return Integer.parseInt(str);
-            } catch (NumberFormatException e) {
-                System.out.println("Error parsing integer: " + e.getMessage());
-            }
-        }
-        return defaultValue;
-    }
-
-    private double safeParseDouble(String str, double defaultValue) {
+    /**
+     * Safely parses a String to a Double, returning a default value in case of
+     * failure.
+     *
+     * @param value        The string to parse.
+     * @param defaultValue The default value to return in case parsing fails.
+     * @return The parsed double value or the default value if parsing fails.
+     */
+    private Double safeParseDouble(String value, Double defaultValue) {
         try {
-            return str != null ? Double.parseDouble(str) : defaultValue;
+            return Double.parseDouble(value);
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Safely parses a String to an Integer, returning a default value in case of
+     * failure.
+     *
+     * @param value        The string to parse.
+     * @param defaultValue The default value to return in case parsing fails.
+     * @return The parsed integer value or the default value if parsing fails.
+     */
+    private int safeParseInt(String value, int defaultValue) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Retrieves the weather description associated with a given weather code.
+     *
+     * @param code The weather code.
+     * @return The description of the weather associated with the code.
+     */
+    private String getWeatherDescription(String code) {
+        return weatherDescriptions.getOrDefault(code, "Weather code not found");
     }
 
 }
